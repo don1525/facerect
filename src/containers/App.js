@@ -98,9 +98,20 @@ const particlesParams =  {
     //console.log(container);
   };
 
- const app = new Clarifai.App({
-   apiKey: 'a5338064528c415892cf4b4d8610d5ce',
- })
+const initialState = {
+    input: '',
+    imageUrl: '',
+    boxes: [],
+    route: 'signIn',
+    isSignedIn: false,
+    user: {
+      id: '',
+      name: '',
+      email: '',
+      entries: 0,
+      joined: ''
+    }
+  }
 
 class App extends Component {
   constructor(){
@@ -145,35 +156,43 @@ class App extends Component {
 
   onImageSubmit = () => {
     this.setState({imageUrl: this.state.input});
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
-      .then(response => {
-        if(response) {
-          fetch('http://localhost:3000/image', {
-            method: 'put',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-              'id': this.state.user.id
-            })
-          })
-          .then(response => response.json())
-          .then(count => {
-           const copy={...this.state.user};
-           copy.entries=count;
-           this.setState({user: copy});
-          })
-        }
-        this.displayFaceBox(this.calculateFaceLocation(response))
+    fetch('http://localhost:3000/clarifaiApi', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        image: this.state.input
       })
-      .catch(err => console.log(err));
+    })
+    .then(response => response.json())
+    .then(response => {
+      if(response) {
+        fetch('http://localhost:3000/image', {
+                method: 'put',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                  'id': this.state.user.id
+                })
+              })
+        .then(response => response.json())
+        .then(count => {
+          const copy={...this.state.user};
+          copy.entries=count;
+          this.setState({user: copy});
+        })
+        .catch(console.log);
+      }
+      this.displayFaceBox(this.calculateFaceLocation(response))
+    })
   }
 
   onRouteChange = (route) => {
     switch (route) {
       case 'signIn':
-        this.setState({isSignedIn: false});
+        this.setState(initialState);
+        console.log('routed');
         break;
       case 'register':
-        this.setState({isSignedIn: false});
+        this.setState(initialState);
         break;
       case 'home':
         this.setState({isSignedIn: true});
