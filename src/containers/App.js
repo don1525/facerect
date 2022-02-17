@@ -155,7 +155,7 @@ class App extends Component {
 
   onImageSubmit = () => {
     this.setState({imageUrl: this.state.input});
-    fetch('https://enigmatic-reaches-66764.herokuapp.com/clarifaiApi', {
+    fetch('https://face-finder-1525-server.herokuapp.com/clarifaiApi', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -165,7 +165,7 @@ class App extends Component {
     .then(response => response.json())
     .then(response => {
       if(response) {
-        fetch('https://enigmatic-reaches-66764.herokuapp.com/image', {
+        fetch('https://face-finder-1525-server.herokuapp.com/image', {
                 method: 'put',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({

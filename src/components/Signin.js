@@ -18,7 +18,7 @@ class Signin extends Component {
     }
 
     onSubmitSignIn = () => {
-        fetch('https://enigmatic-reaches-66764.herokuapp.com/signIn', {
+        fetch('https://face-finder-1525-server.herokuapp.com/signIn', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
